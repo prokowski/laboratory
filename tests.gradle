@@ -1,0 +1,66 @@
+configurations {
+    integrationImplementation.extendsFrom testImplementation
+    integrationCompile.extendsFrom testCompile
+    integrationCompileOnly.extendsFrom testCompileOnly
+    integrationRuntime.extendsFrom testRuntime
+}
+
+ext {
+    customEnv = [
+            profiles: []
+    ]
+}
+
+sourceSets {
+    integration {
+        java {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDir file('src/integration/java')
+        }
+        groovy {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDir file('src/integration/groovy')
+        }
+    }
+}
+
+test {
+    testLogging {
+        // set options for log level LIFECYCLE
+        events "passed", "failed", "skipped"
+        exceptionFormat "short"
+
+        // set options for log level DEBUG
+        debug {
+            events "started", "skipped", "failed"
+            exceptionFormat "full"
+        }
+
+        info.events = ["started", "passed", "failed", "skipped"]
+    }
+}
+
+task integration(type: Test, description: 'Runs the integration tests.', group: 'Verification') {
+    useJUnitPlatform()
+    testClassesDirs = sourceSets.integration.output.classesDirs
+    classpath = sourceSets.integration.runtimeClasspath
+
+    testLogging {
+        // set options for log level LIFECYCLE
+        events "passed", "failed", "skipped"
+        exceptionFormat "short"
+
+        // set options for log level DEBUG
+        debug {
+            events "started", "skipped", "failed"
+            exceptionFormat "full"
+        }
+
+        info.events = ["started", "passed", "failed", "skipped"]
+    }
+}
+
+check.dependsOn integration
+integration.mustRunAfter test

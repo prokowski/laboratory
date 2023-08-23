@@ -1,0 +1,49 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.1.2'
+	id 'io.spring.dependency-management' version '1.1.2'
+}
+
+apply plugin: 'groovy'
+apply from: "tests.gradle"
+
+group = 'com.laboratory'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'com.h2database:h2:2.2.220'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'com.google.guava:guava:32.1.2-jre'
+	implementation 'org.flywaydb:flyway-core:9.21.1'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	/// TESTING
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.spockframework:spock-core:2.4-M1-groovy-3.0'
+	testImplementation 'org.spockframework:spock-spring:2.4-M1-groovy-3.0'
+	testImplementation 'com.h2database:h2:2.2.220'
+	testImplementation 'org.codehaus.groovy:groovy-all:3.0.18'
+	testCompileOnly 'org.projectlombok:lombok'
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
