@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SampleQueryDto {
 
-    String sampleId;
+    private String sampleId;
 
-    String patientId;
+    private String patientId;
 
-    String rackId;
+    private String rackId;
 }

@@ -13,10 +13,10 @@ import java.util.List;
 @NoArgsConstructor
 public class RackQueryDto {
 
-    String rackId;
+    private String rackId;
 
-    int capacity;
+    private int capacity;
 
-    List<String> samples;
+    private List<String> samples;
 
 }
