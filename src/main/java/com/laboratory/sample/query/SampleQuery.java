@@ -18,7 +18,7 @@ public class SampleQuery extends AbstractEntity {
     @Embedded
     private SampleId sampleId;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patientId", referencedColumnName = "patientId")
     private PatientQuery patient;
 

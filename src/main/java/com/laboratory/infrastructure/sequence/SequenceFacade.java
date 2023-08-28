@@ -8,7 +8,7 @@ public class SequenceFacade {
 	private final SequenceGenerator sequenceGenerator;
 
 	public String nextSequence(SequenceIdentifier sequenceIdentifier) {
-		Long sequence = sequenceGenerator.next(sequenceIdentifier.name());
-		return SequenceIdentityCreator.createIdentity(sequenceIdentifier.name(), sequence);
+		Long sequence = sequenceGenerator.next(sequenceIdentifier.getIdentifier());
+		return SequenceIdentityCreator.createIdentity(sequenceIdentifier.getIdentifier(), sequence);
 	}
 }

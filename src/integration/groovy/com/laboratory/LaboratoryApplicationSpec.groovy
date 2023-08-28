@@ -73,6 +73,10 @@ class LaboratoryApplicationSpec extends Specification {
                 .patientId("PTN3")
                 .build()
 
+        CreateSampleDto sample4 = CreateSampleDto.builder()
+                .patientId("PTN3")
+                .build()
+
         when: "create patients: PTN1, PTN2, PTN3"
         mvc.perform(post("/api/patients").contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(patient1)))
@@ -138,7 +142,7 @@ class LaboratoryApplicationSpec extends Specification {
                 .andExpect(jsonPath("\$.capacity").value(5))
                 .andExpect(jsonPath("\$.samples").value([]))
 
-        when: "create samples: SMP1, SMP2, SMP3"
+        when: "create samples: SMP1, SMP2, SMP3, SMP4"
         mvc.perform(post("/api/samples").contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(sample1)))
                 .andExpect(status().isOk())
@@ -151,7 +155,11 @@ class LaboratoryApplicationSpec extends Specification {
                 .content(objectMapper.writeValueAsString(sample3)))
                 .andExpect(status().isOk())
 
-        then: "system has samples: SMP1, SMP2, SMP3"
+        mvc.perform(post("/api/samples").contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(sample4)))
+                .andExpect(status().isOk())
+
+        then: "system has samples: SMP1, SMP2, SMP3, SMP4"
         mvc.perform(get("/api/samples/{id}", "SMP1")).andExpect(status().isOk())
                 .andExpect(jsonPath("\$.sampleId").value("SMP1"))
                 .andExpect(jsonPath("\$.patientId").value("PTN1"))
@@ -167,6 +175,24 @@ class LaboratoryApplicationSpec extends Specification {
                 .andExpect(jsonPath("\$.patientId").value("PTN3"))
                 .andExpect(jsonPath("\$.rackId").value(null))
 
+        mvc.perform(get("/api/samples/{id}", "SMP3")).andExpect(status().isOk())
+                .andExpect(jsonPath("\$.sampleId").value("SMP3"))
+                .andExpect(jsonPath("\$.patientId").value("PTN3"))
+                .andExpect(jsonPath("\$.rackId").value(null))
+
+        and: "patients have samples"
+        mvc.perform(get("/api/patients/{id}", "PTN1")).andExpect(status().isOk())
+                .andExpect(jsonPath("\$.patientId").value("PTN1"))
+                .andExpect(jsonPath("\$.samples").value(["SMP1"]))
+
+        mvc.perform(get("/api/patients/{id}", "PTN2")).andExpect(status().isOk())
+                .andExpect(jsonPath("\$.patientId").value("PTN2"))
+                .andExpect(jsonPath("\$.samples").value(["SMP2"]))
+
+        mvc.perform(get("/api/patients/{id}", "PTN3")).andExpect(status().isOk())
+                .andExpect(jsonPath("\$.patientId").value("PTN3"))
+                .andExpect(jsonPath("\$.samples").value(["SMP3", "SMP4"]))
+
         when: "assign samples to rack"
         mvc.perform(put("/api/samples/{id}/assignToRack", "SMP1")).andExpect(status().isOk())
 
@@ -174,7 +200,9 @@ class LaboratoryApplicationSpec extends Specification {
 
         mvc.perform(put("/api/samples/{id}/assignToRack", "SMP3")).andExpect(status().isOk())
 
-        then: "samples SMP1, SMP3 are assignment to rack RCK1 and sample SMP2 is assignment to rack RCK2"
+        mvc.perform(put("/api/samples/{id}/assignToRack", "SMP4")).andExpect(status().isOk())
+
+        then: "samples SMP1, SMP3 are assignment to rack RCK1 and sample SMP2, SMP4 are assignment to rack RCK2"
         mvc.perform(get("/api/samples/{id}", "SMP1")).andExpect(status().isOk())
                 .andExpect(jsonPath("\$.sampleId").value("SMP1"))
                 .andExpect(jsonPath("\$.patientId").value("PTN1"))
@@ -189,6 +217,11 @@ class LaboratoryApplicationSpec extends Specification {
                 .andExpect(jsonPath("\$.sampleId").value("SMP3"))
                 .andExpect(jsonPath("\$.patientId").value("PTN3"))
                 .andExpect(jsonPath("\$.rackId").value("RCK1"))
+
+        mvc.perform(get("/api/samples/{id}", "SMP4")).andExpect(status().isOk())
+                .andExpect(jsonPath("\$.sampleId").value("SMP4"))
+                .andExpect(jsonPath("\$.patientId").value("PTN3"))
+                .andExpect(jsonPath("\$.rackId").value("RCK2"))
 
         and: "racks have samples"
         mvc.perform(get("/api/racks/{id}", "RCK1")).andExpect(status().isOk())
@@ -199,7 +232,7 @@ class LaboratoryApplicationSpec extends Specification {
         mvc.perform(get("/api/racks/{id}", "RCK2")).andExpect(status().isOk())
                 .andExpect(jsonPath("\$.rackId").value("RCK2"))
                 .andExpect(jsonPath("\$.capacity").value(5))
-                .andExpect(jsonPath("\$.samples").value(["SMP2"]))
+                .andExpect(jsonPath("\$.samples").value(["SMP2", "SMP4"]))
 
         mvc.perform(get("/api/racks/{id}", "RCK3")).andExpect(status().isOk())
                 .andExpect(jsonPath("\$.rackId").value("RCK3"))

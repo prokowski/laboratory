@@ -15,7 +15,7 @@ class SampleFactory {
 
     Sample create(@NonNull PatientId patientId) {
         return Sample.builder()
-                .sampleId(new SampleId(sequenceFacade.nextSequence(SequenceIdentifier.SMP)))
+                .sampleId(new SampleId(sequenceFacade.nextSequence(SequenceIdentifier.SAMPLE_IDENTIFIER)))
                 .patientId(patientId)
                 .build();
     }

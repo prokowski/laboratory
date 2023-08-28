@@ -15,7 +15,7 @@ class RackFactory {
 
     Rack create(int capacity) {
         return Rack.builder()
-                .rackId(new RackId(sequenceFacade.nextSequence(SequenceIdentifier.RCK)))
+                .rackId(new RackId(sequenceFacade.nextSequence(SequenceIdentifier.RACK_IDENTIFIER)))
                 .capacity(capacity)
                 .samples(new ArrayList<>())
                 .build();

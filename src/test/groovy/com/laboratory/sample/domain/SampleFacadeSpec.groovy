@@ -8,6 +8,7 @@ import com.laboratory.rack.domain.RackConfiguration
 import com.laboratory.rack.domain.RackFacade
 import com.laboratory.rack.query.RackQuery
 import com.laboratory.rack.query.RackQueryRepository
+import com.laboratory.sample.domain.exceptions.NoSpaceInLaboratoryException
 import com.laboratory.sample.query.SampleQuery
 import com.laboratory.sample.query.SampleQueryRepository
 import spock.lang.Specification
@@ -117,7 +118,7 @@ class SampleFacadeSpec extends Specification {
         sample4.rack.rackId == rackId3
     }
 
-    def "should thrown 'There is not space in Laboratory!' (not enough racks)"() {
+    def "should thrown 'There is no space in Laboratory!' (not enough racks)"() {
         given: "3 patients with the same age, 2 racks and 3 samples"
         def patientId1 = patientFacade.create(20, "Company1", "CityDistrict1", "VisionDefect1")
         def patientId2 = patientFacade.create(20, "Company2", "CityDistrict2", "VisionDefect2")
@@ -135,12 +136,11 @@ class SampleFacadeSpec extends Specification {
         sampleFacade.assignToRack(sampleId2)
         sampleFacade.assignToRack(sampleId3)
 
-        then: "exception is thrown"
-        def e = thrown(RuntimeException)
-        e.message == "There is no space in Laboratory!"
+        then: "there is no space in Laboratory"
+        thrown(NoSpaceInLaboratoryException)
     }
 
-    def "should thrown 'There is not space in Laboratory!' (not enough rack capacity)"() {
+    def "should thrown 'There is no space in Laboratory!' (not enough rack capacity)"() {
         given: "3 patients, 1 rack with capacity (2) and 3 samples"
         def patientId1 = patientFacade.create(20, "Company1", "CityDistrict1", "VisionDefect1")
         def patientId2 = patientFacade.create(30, "Company2", "CityDistrict2", "VisionDefect2")
@@ -157,9 +157,8 @@ class SampleFacadeSpec extends Specification {
         sampleFacade.assignToRack(sampleId2)
         sampleFacade.assignToRack(sampleId3)
 
-        then: "exception is thrown"
-        def e = thrown(RuntimeException)
-        e.message == "There is no space in Laboratory!"
+        then: "there is no space in Laboratory"
+        thrown(NoSpaceInLaboratoryException)
     }
     
 }

@@ -2,6 +2,7 @@ package com.laboratory.sample.domain;
 
 import com.laboratory.patient.query.PatientQuery;
 import com.laboratory.rack.query.RackQuery;
+import com.laboratory.sample.domain.exceptions.NoSpaceInLaboratoryException;
 import com.laboratory.sample.query.SampleQueryRepository;
 import com.laboratory.shared.ddd.SampleId;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ class SampleAllocator {
             }
         }
 
-        throw new RuntimeException("There is no space in Laboratory!");
+        throw new NoSpaceInLaboratoryException();
     }
 
     private boolean isLegal(@NonNull PatientQuery patient, @NonNull RackQuery rack) {

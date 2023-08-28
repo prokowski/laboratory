@@ -7,10 +7,7 @@ import com.laboratory.shared.ddd.PatientId;
 import lombok.Getter;
 
 import java.lang.reflect.Field;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -127,7 +124,8 @@ class InMemoryPatientQueryRepository implements PatientQueryRepository {
                 (int) fieldValues.get("age"),
                 (String) fieldValues.get("company"),
                 (String) fieldValues.get("cityDistrict"),
-                (String) fieldValues.get("visionDefect"));
+                (String) fieldValues.get("visionDefect"),
+                (List) fieldValues.get("samples"));
     }
 
     @Override

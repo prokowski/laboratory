@@ -1,10 +1,16 @@
 package com.laboratory.infrastructure.sequence;
 
-/**
- * PTN - Patient
- * SMP - Sample
- * RCK - Rack
- */
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
 public enum SequenceIdentifier {
-	PTN, SMP, RCK
+
+	PATIENT_IDENTIFIER("PTN"),
+	SAMPLE_IDENTIFIER("SMP"),
+	RACK_IDENTIFIER("RCK");
+
+	@Getter
+	private final String identifier;
+
 }

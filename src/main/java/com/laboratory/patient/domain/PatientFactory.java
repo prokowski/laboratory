@@ -14,7 +14,7 @@ class PatientFactory {
 
     Patient create(int age, @NonNull String company, @NonNull String cityDistrict, @NonNull String visionDefect) {
         return Patient.builder()
-                .patientId(new PatientId(sequenceFacade.nextSequence(SequenceIdentifier.PTN)))
+                .patientId(new PatientId(sequenceFacade.nextSequence(SequenceIdentifier.PATIENT_IDENTIFIER)))
                 .age(age)
                 .company(company)
                 .cityDistrict(cityDistrict)
