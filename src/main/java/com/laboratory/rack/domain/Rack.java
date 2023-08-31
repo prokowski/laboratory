@@ -1,6 +1,7 @@
 package com.laboratory.rack.domain;
 
 import com.google.common.base.Preconditions;
+import com.laboratory.patient.query.PatientQuery;
 import com.laboratory.rack.query.RackQuery;
 import com.laboratory.shared.ddd.AbstractAggregateEntity;
 import com.laboratory.shared.ddd.PatientId;
@@ -24,7 +25,6 @@ class Rack extends AbstractAggregateEntity {
 
     private int capacity;
 
-    @Getter(AccessLevel.PACKAGE)
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "rack")
     private List<RackSample> samples;
 
@@ -38,6 +38,15 @@ class Rack extends AbstractAggregateEntity {
                 .cityDistrict(cityDistrict)
                 .visionDefect(visionDefect)
                 .build());
+    }
+
+    boolean isLegal(PatientQuery patient) {
+        for (RackSample rackSample : samples) {
+            if (!rackSample.isLegal(patient)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     boolean hasEnoughCapacity() {

@@ -34,12 +34,6 @@ class RackSampleAllocator {
             return false;
         }
 
-        for (RackSample rackSample : rack.getSamples()) {
-            if (!rackSample.isLegal(patient)) {
-                return false;
-            }
-        }
-
-        return true;
+        return rack.isLegal(patient);
     }
 }
