@@ -6,8 +6,8 @@ import com.laboratory.patient.query.PatientQueryRepository;
 import com.laboratory.shared.ddd.PatientId;
 import lombok.Getter;
 
-import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Comparator;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -23,16 +23,6 @@ class InMemoryPatientMapRepository {
         }
 
         return instance;
-    }
-
-    static void resetInstance() {
-        instance = null;
-    }
-
-    static void clear() {
-        if(instance != null) {
-            instance.map.clear();
-        }
     }
 
     @Getter
@@ -111,32 +101,10 @@ class InMemoryPatientQueryRepository implements PatientQueryRepository {
 
     private final ConcurrentHashMap<PatientId, Patient> map = InMemoryPatientMapRepository.getInstance().getMap();
 
-    private PatientQuery toQuery(Patient patient) throws IllegalAccessException {
-        Field[] fields = patient.getClass().getDeclaredFields();
-
-        Map<String, Object> fieldValues = new HashMap<>();
-        for (Field field : fields) {
-            field.setAccessible(true);
-            fieldValues.put(field.getName(), field.get(patient));
-        }
-
-        return new PatientQuery(((PatientId) fieldValues.get("patientId")),
-                (int) fieldValues.get("age"),
-                (String) fieldValues.get("company"),
-                (String) fieldValues.get("cityDistrict"),
-                (String) fieldValues.get("visionDefect"),
-                (List) fieldValues.get("samples"));
-    }
-
     @Override
     public PatientQuery findByPatientId(PatientId id) {
-        try {
-            return toQuery(map.get(id));
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        return map.get(id).toQuery();
     }
-
 
     @Override
     public <S extends PatientQuery> S save(S entity) {
@@ -160,13 +128,8 @@ class InMemoryPatientQueryRepository implements PatientQueryRepository {
 
     @Override
     public Iterable<PatientQuery> findAll() {
-        return map.values().stream().sorted(Comparator.comparing(p -> p.getPatientId().id())).map(patient -> {
-            try {
-                return toQuery(patient);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        }).collect(Collectors.toList());
+        return map.values().stream().sorted(Comparator.comparing(p -> p.getPatientId().id()))
+                .map(Patient::toQuery).collect(Collectors.toList());
     }
 
     @Override

@@ -2,9 +2,10 @@ package com.laboratory.rack;
 
 import com.laboratory.rack.domain.RackFacade;
 import com.laboratory.rack.domain.dto.CreateRackDto;
-import com.laboratory.rack.query.RackQueryRepository;
-import com.laboratory.rack.query.dto.RackQueryDto;
+import com.laboratory.rack.view.RackViewRepository;
+import com.laboratory.rack.view.dto.RackViewDto;
 import com.laboratory.shared.ddd.RackId;
+import com.laboratory.shared.ddd.SampleId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,7 @@ class RackController {
 
     private final RackFacade rackFacade;
 
-    private final RackQueryRepository rackQueryRepository;
+    private final RackViewRepository rackViewRepository;
 
     @PostMapping
     @ResponseBody
@@ -26,7 +27,13 @@ class RackController {
 
     @GetMapping(value = "{rackId}")
     @ResponseBody
-    public RackQueryDto getRack(@PathVariable RackId rackId) {
-        return rackQueryRepository.findByRackId(rackId).toDto();
+    public RackViewDto getRack(@PathVariable RackId rackId) {
+        return rackViewRepository.findByRackId(rackId).toDto();
+    }
+
+    @PutMapping(value = "/assignSample/{sampleId}")
+    @ResponseBody
+    public String assignToRack(@PathVariable String sampleId) {
+        return rackFacade.assignSample(new SampleId(sampleId)).id();
     }
 }

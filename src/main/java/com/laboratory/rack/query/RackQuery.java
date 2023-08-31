@@ -1,15 +1,16 @@
 package com.laboratory.rack.query;
 
-import com.laboratory.rack.query.dto.RackQueryDto;
 import com.laboratory.shared.ddd.AbstractEntity;
 import com.laboratory.shared.ddd.RackId;
 import com.laboratory.shared.ddd.SampleId;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.NaturalId;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Builder
 @Entity
@@ -25,23 +26,11 @@ public class RackQuery extends AbstractEntity {
 
     private int capacity;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "rack")
-    private List<RackSampleQuery> samples;
-
-    public List<SampleId> getSamples() {
-        return samples.stream().map(RackSampleQuery::getSampleId).collect(Collectors.toList());
-    }
-
-    public boolean hasEnoughCapacity() {
-        return samples.size() < capacity;
-    }
-
-    public RackQueryDto toDto() {
-        return RackQueryDto.builder()
-                .rackId(rackId.id())
-                .capacity(capacity)
-                .samples(samples.stream().map(r -> r.getSampleId().id()).collect(Collectors.toList()))
-                .build();
-    }
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name="rack_sample",
+            joinColumns=@JoinColumn(name="rackId")
+    )
+    private List<SampleId> samples;
 
 }

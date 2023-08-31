@@ -1,9 +1,16 @@
 # Laboratory Application
-Where is my test tube?
 
 Example of Hexagonal Architecture (DDD + CQRS)
 
-The aim of this application is to create a service to track the placement of test samples in laboratory.
+The aim of this application is to create a service to assign of test samples to racks in laboratory.
+
+Service will assign rackID to sampleID with the following rules:
+1. Each tube contains a material for a specific patient.
+2. It is illegal to place patients of the same age into the same rack.
+3. It is illegal to place patients working in the same company into the same rack.
+4. It is illegal to place patients who live in the same city district into the same rack.
+5. It is illegal to place patients with the same vision defect into the same rack.
+6. The number of racks is very limited.
 
 # Prerequisites
 
@@ -42,21 +49,6 @@ POST localhost:8080/api/patients
 GET localhost:8080/api/patients/{patientId}
 ```
 
-## Add rack
-
-```
-POST localhost:8080/api/racks
-{
-    "capacity": int
-}
-```
-
-## Get rack by id
-
-```
-GET localhost:8080/api/racks/{rackId}
-```
-
 ## Add sample
 
 ```
@@ -72,10 +64,25 @@ POST localhost:8080/api/samples
 GET localhost:8080/api/samples/{sampleId}
 ```
 
+## Add rack
+
+```
+POST localhost:8080/api/racks
+{
+    "capacity": int
+}
+```
+
+## Get rack by id
+
+```
+GET localhost:8080/api/racks/{rackId}
+```
+
 ## Assign sample to rack
 
 ```
-PUT localhost:8080/api/samples/{sampleId}/assignToRack
+PUT localhost:8080/api/racks/assignSample/{sampleId}
 ```
 
 # Tests
@@ -87,6 +94,6 @@ PUT localhost:8080/api/samples/{sampleId}/assignToRack
 
 ## Facade tests
 
-[PatientFacadeSpec.groovy](./src/test/groovy/com/laboratory/patient/domain/PatientFacadeSpec.groovy) - checks the creation of patients.\
-[RackFacadeSpec.groovy](./src/test/groovy/com/laboratory/rack/domain/RackFacadeSpec.groovy) - checks the creation of racks.\
-[SampleFacadeSpec.groovy](./src/test/groovy/com/laboratory/sample/domain/SampleFacadeSpec.groovy) - checks the creation of samples and samples assignment.
+[PatientFacadeSpec](./src/test/groovy/com/laboratory/patient/domain/PatientFacadeSpec.groovy) - checks the creation of patients.\
+[SampleFacadeSpec](./src/test/groovy/com/laboratory/sample/domain/SampleFacadeSpec.groovy) - checks the creation of samples. \
+[RackFacadeSpec](./src/test/groovy/com/laboratory/rack/domain/RackFacadeSpec.groovy) - checks the creation of racks and samples assignment.

@@ -1,23 +1,21 @@
-package com.laboratory.rack.query;
+package com.laboratory.rack.view;
 
 import com.laboratory.shared.ddd.AbstractEntity;
 import com.laboratory.shared.ddd.SampleId;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "rack_sample")
-public class RackSampleQuery extends AbstractEntity {
+public class RackSampleView extends AbstractEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="rackId")
-    private RackQuery rack;
+    private RackView rack;
 
     @Getter
     @Embedded

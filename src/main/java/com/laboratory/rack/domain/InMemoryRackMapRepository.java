@@ -3,12 +3,11 @@ package com.laboratory.rack.domain;
 
 import com.laboratory.rack.query.RackQuery;
 import com.laboratory.rack.query.RackQueryRepository;
-import com.laboratory.rack.query.RackSampleQuery;
 import com.laboratory.shared.ddd.RackId;
 import lombok.Getter;
 
-import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Comparator;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -24,16 +23,6 @@ class InMemoryRackMapRepository {
         }
 
         return instance;
-    }
-
-    static void resetInstance() {
-        instance = null;
-    }
-
-    static void clear() {
-        if(instance != null) {
-            instance.map.clear();
-        }
     }
 
     @Getter
@@ -73,7 +62,8 @@ class InMemoryRackRepository implements RackRepository {
 
     @Override
     public Iterable<Rack> findAll() {
-        throw new UnsupportedOperationException();
+        return map.values().stream().sorted(Comparator.comparing(r -> r.getRackId().id()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -117,30 +107,11 @@ class InMemoryRackQueryRepository implements RackQueryRepository {
 
     private final ConcurrentHashMap<RackId, Rack> map = InMemoryRackMapRepository.getInstance().getMap();
 
-    private RackQuery toQuery(Rack rack) throws IllegalAccessException {
-        Field[] fields = rack.getClass().getDeclaredFields();
-
-        Map<String, Object> fieldValues = new HashMap<>();
-        for (Field field : fields) {
-            field.setAccessible(true);
-            fieldValues.put(field.getName(), field.get(rack));
-        }
-
-        List<RackSample> samples = (List<RackSample>) fieldValues.get("samples");
-        List<RackSampleQuery> sampleQueries = samples.stream().map(r-> RackSampleQuery.builder().sampleId(r.getSampleId()).build()).toList();
-
-        return new RackQuery(((RackId) fieldValues.get("rackId")),(int) fieldValues.get("capacity"), sampleQueries);
-    }
 
     @Override
     public RackQuery findByRackId(RackId id) {
-        try {
-            return toQuery(map.get(id));
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        return map.get(id).toQuery();
     }
-
 
     @Override
     public <S extends RackQuery> S save(S entity) {
@@ -164,13 +135,8 @@ class InMemoryRackQueryRepository implements RackQueryRepository {
 
     @Override
     public Iterable<RackQuery> findAll() {
-        return map.values().stream().sorted(Comparator.comparing(r -> r.getRackId().id())).map(rack -> {
-            try {
-                return toQuery(rack);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        }).collect(Collectors.toList());
+        return map.values().stream().sorted(Comparator.comparing(r -> r.getRackId().id()))
+                .map(Rack::toQuery).collect(Collectors.toList());
     }
 
     @Override

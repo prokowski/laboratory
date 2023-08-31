@@ -1,4 +1,4 @@
-package com.laboratory.patient.query.dto;
+package com.laboratory.patient.view.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,8 +11,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PatientQueryDto {
-
+public class PatientViewDto {
     private String patientId;
 
     private int age;

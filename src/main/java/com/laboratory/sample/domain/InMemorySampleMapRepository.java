@@ -1,19 +1,12 @@
 package com.laboratory.sample.domain;
 
 
-import com.laboratory.patient.query.PatientQueryRepository;
-import com.laboratory.rack.query.RackQueryRepository;
 import com.laboratory.sample.query.SampleQuery;
 import com.laboratory.sample.query.SampleQueryRepository;
-import com.laboratory.shared.ddd.PatientId;
-import com.laboratory.shared.ddd.RackId;
 import com.laboratory.shared.ddd.SampleId;
 import lombok.Getter;
 
-import java.lang.reflect.Field;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -30,16 +23,6 @@ class InMemorySampleMapRepository {
         }
 
         return instance;
-    }
-
-    static void resetInstance() {
-        instance = null;
-    }
-
-    static void clear() {
-        if(instance != null) {
-            instance.map.clear();
-        }
     }
 
     @Getter
@@ -123,38 +106,11 @@ class InMemorySampleQueryRepository implements SampleQueryRepository {
 
     private final ConcurrentHashMap<SampleId, Sample> map = InMemorySampleMapRepository.getInstance().getMap();
 
-    private final RackQueryRepository rackQueryRepository;
-
-    private final PatientQueryRepository patientQueryRepository;
-
-    InMemorySampleQueryRepository(RackQueryRepository rackQueryRepository, PatientQueryRepository patientQueryRepository) {
-        this.rackQueryRepository = rackQueryRepository;
-        this.patientQueryRepository = patientQueryRepository;
-    }
-
-    private SampleQuery toQuery(Sample sample) throws IllegalAccessException {
-        Field[] fields = sample.getClass().getDeclaredFields();
-
-        Map<String, Object> fieldValues = new HashMap<>();
-        for (Field field : fields) {
-            field.setAccessible(true);
-            fieldValues.put(field.getName(), field.get(sample));
-        }
-
-        return new SampleQuery(((SampleId) fieldValues.get("sampleId")),
-                fieldValues.get("patientId") != null ? patientQueryRepository.findByPatientId(((PatientId) fieldValues.get("patientId"))) : null,
-                fieldValues.get("rackId") != null ? rackQueryRepository.findByRackId(((RackId) fieldValues.get("rackId"))) : null);
-    }
 
     @Override
     public SampleQuery findBySampleId(SampleId id) {
-        try {
-            return toQuery(map.get(id));
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        return map.get(id).toQuery();
     }
-
 
     @Override
     public <S extends SampleQuery> S save(S entity) {
@@ -178,13 +134,8 @@ class InMemorySampleQueryRepository implements SampleQueryRepository {
 
     @Override
     public Iterable<SampleQuery> findAll() {
-        return map.values().stream().sorted(Comparator.comparing(s -> s.getSampleId().id())).map(sample -> {
-            try {
-                return toQuery(sample);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        }).collect(Collectors.toList());
+        return map.values().stream().sorted(Comparator.comparing(s -> s.getSampleId().id()))
+                .map(Sample::toQuery).collect(Collectors.toList());
     }
 
     @Override

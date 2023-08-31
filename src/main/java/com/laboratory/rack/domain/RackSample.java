@@ -18,4 +18,5 @@ class RackSample extends AbstractEntity {
 
     @Embedded
     private SampleId sampleId;
+
 }

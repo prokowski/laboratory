@@ -2,8 +2,8 @@ package com.laboratory.patient;
 
 import com.laboratory.patient.domain.PatientFacade;
 import com.laboratory.patient.domain.dto.CreatePatientDto;
-import com.laboratory.patient.query.PatientQueryRepository;
-import com.laboratory.patient.query.dto.PatientQueryDto;
+import com.laboratory.patient.view.PatientViewRepository;
+import com.laboratory.patient.view.dto.PatientViewDto;
 import com.laboratory.shared.ddd.PatientId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +16,7 @@ class PatientController {
 
     private final PatientFacade patientFacade;
 
-    private final PatientQueryRepository patientQueryRepository;
+    private final PatientViewRepository patientViewRepository;
 
     @PostMapping
     @ResponseBody
@@ -27,8 +27,8 @@ class PatientController {
 
     @GetMapping(value = "{patientId}")
     @ResponseBody
-    public PatientQueryDto getPatient(@PathVariable String patientId) {
-        return patientQueryRepository.findByPatientId(new PatientId(patientId)).toDto();
+    public PatientViewDto getPatient(@PathVariable String patientId) {
+        return patientViewRepository.findByPatientId(new PatientId(patientId)).toDto();
     }
 
 }

@@ -1,12 +1,14 @@
 package com.laboratory.shared.ddd;
 
 import com.google.common.base.Preconditions;
+import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import static com.laboratory.infrastructure.sequence.SequenceIdentifier.SAMPLE_IDENTIFIER;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Embeddable
 public class SampleId implements DomainId {
     private String sampleId;
 

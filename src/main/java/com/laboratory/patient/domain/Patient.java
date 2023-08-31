@@ -1,5 +1,6 @@
 package com.laboratory.patient.domain;
 
+import com.laboratory.patient.query.PatientQuery;
 import com.laboratory.shared.ddd.AbstractAggregateEntity;
 import com.laboratory.shared.ddd.PatientId;
 import jakarta.persistence.Embedded;
@@ -23,5 +24,15 @@ class Patient extends AbstractAggregateEntity {
     private String cityDistrict;
 
     private String visionDefect;
+
+    PatientQuery toQuery() {
+        return PatientQuery.builder()
+                .patientId(patientId)
+                .age(age)
+                .company(company)
+                .cityDistrict(cityDistrict)
+                .visionDefect(visionDefect)
+                .build();
+    }
 
 }

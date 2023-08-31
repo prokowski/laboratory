@@ -1,16 +1,20 @@
 package com.laboratory.sample.query;
 
-import com.laboratory.patient.query.PatientQuery;
-import com.laboratory.rack.query.RackQuery;
-import com.laboratory.sample.query.dto.SampleQueryDto;
 import com.laboratory.shared.ddd.AbstractEntity;
+import com.laboratory.shared.ddd.PatientId;
 import com.laboratory.shared.ddd.SampleId;
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Builder
 @Entity
-@Getter@AllArgsConstructor
+@Getter
+@AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "sample")
 public class SampleQuery extends AbstractEntity {
@@ -18,19 +22,7 @@ public class SampleQuery extends AbstractEntity {
     @Embedded
     private SampleId sampleId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "patientId", referencedColumnName = "patientId")
-    private PatientQuery patient;
+    @Embedded
+    private PatientId patientId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rackId", referencedColumnName = "rackId")
-    private RackQuery rack;
-
-    public SampleQueryDto toDto() {
-        return SampleQueryDto.builder()
-                .sampleId(sampleId.id())
-                .patientId(patient.getPatientId().id())
-                .rackId(rack != null ? rack.getRackId().id() : null)
-                .build();
-    }
 }

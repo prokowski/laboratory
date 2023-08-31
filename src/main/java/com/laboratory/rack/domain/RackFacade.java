@@ -15,15 +15,21 @@ public class RackFacade {
 
     private final RackRepository repository;
 
+    private final RackSampleAllocator rackSampleAllocator;
+
     public RackId create(int capacity) {
         Rack rack = factory.create(capacity);
         repository.save(rack);
         return rack.getRackId();
     }
 
-    public void addSample(@NonNull RackId rackId, @NonNull SampleId sampleId) {
-        Rack rack = repository.findByRackId(rackId);
+    public RackId assignSample(@NonNull SampleId sampleId) {
+        Iterable<Rack> racks = repository.findAll();
+
+        Rack rack = rackSampleAllocator.allocate(sampleId, racks);
         rack.addSample(sampleId);
         repository.save(rack);
+
+        return rack.getRackId();
     }
 }
