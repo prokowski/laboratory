@@ -29,10 +29,6 @@ public class RackView extends AbstractEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "rack")
     private List<RackSampleView> samples;
 
-    public List<SampleId> getSamples() {
-        return samples.stream().map(RackSampleView::getSampleId).collect(Collectors.toList());
-    }
-
     public RackViewDto toDto() {
         return RackViewDto.builder()
                 .rackId(rackId.id())
