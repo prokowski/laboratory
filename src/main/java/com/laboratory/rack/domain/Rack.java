@@ -3,6 +3,7 @@ package com.laboratory.rack.domain;
 import com.google.common.base.Preconditions;
 import com.laboratory.rack.query.RackQuery;
 import com.laboratory.shared.ddd.AbstractAggregateEntity;
+import com.laboratory.shared.ddd.PatientId;
 import com.laboratory.shared.ddd.RackId;
 import com.laboratory.shared.ddd.SampleId;
 import jakarta.persistence.*;
@@ -27,9 +28,16 @@ class Rack extends AbstractAggregateEntity {
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, orphanRemoval = true, mappedBy = "rack")
     private List<RackSample> samples;
 
-    void addSample(@NonNull SampleId sampleId) {
+    void addSample(@NonNull SampleId sampleId, @NonNull PatientId patientId, int age, @NonNull String company, @NonNull String cityDistrict, @NonNull String visionDefect) {
         Preconditions.checkArgument(hasEnoughCapacity(), "Rack {} is full!", rackId);
-        samples.add(RackSample.builder().rack(this).sampleId(sampleId).build());
+        samples.add(RackSample.builder().rack(this)
+                .sampleId(sampleId)
+                .patientId(patientId)
+                .age(age)
+                .company(company)
+                .cityDistrict(cityDistrict)
+                .visionDefect(visionDefect)
+                .build());
     }
 
     boolean hasEnoughCapacity() {

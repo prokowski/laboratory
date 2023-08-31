@@ -27,7 +27,7 @@ public class RackFacade {
         Iterable<Rack> racks = repository.findAll();
 
         Rack rack = rackSampleAllocator.allocate(sampleId, racks);
-        rack.addSample(sampleId);
+
         repository.save(rack);
 
         return rack.getRackId();

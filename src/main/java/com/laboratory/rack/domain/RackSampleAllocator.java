@@ -21,6 +21,7 @@ class RackSampleAllocator {
 
         for(Rack rack : racks) {
             if(isLegal(patient, rack)) {
+                rack.addSample(sampleId, patient.getPatientId(), patient.getAge(), patient.getCompany(), patient.getCityDistrict(), patient.getVisionDefect());
                 return rack;
             }
         }
@@ -34,10 +35,7 @@ class RackSampleAllocator {
         }
 
         for (RackSample rackSample : rack.getSamples()) {
-            SampleQuery sample = sampleQueryRepository.findBySampleId(rackSample.getSampleId());
-            PatientQuery patientDiff = patientQueryRepository.findByPatientId(sample.getPatientId());
-
-            if (!patientDiff.isLegal(patient)) {
+            if (!rackSample.isLegal(patient)) {
                 return false;
             }
         }

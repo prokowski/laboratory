@@ -13,11 +13,11 @@ import org.hibernate.annotations.NaturalId;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 @Table(name = "patient")
 public class PatientQuery extends AbstractEntity {
 
     @NaturalId
-    @Getter
     @Embedded
     private PatientId patientId;
 
@@ -28,12 +28,5 @@ public class PatientQuery extends AbstractEntity {
     private String cityDistrict;
 
     private String visionDefect;
-
-    public boolean isLegal(@NonNull PatientQuery patient) {
-        return patient.age != age
-                && !patient.company.equals(company)
-                && !patient.cityDistrict.equals(cityDistrict)
-                && !patient.visionDefect.equals(visionDefect);
-    }
 
 }
