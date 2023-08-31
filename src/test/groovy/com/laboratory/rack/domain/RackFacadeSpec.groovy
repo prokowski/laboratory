@@ -1,13 +1,16 @@
 package com.laboratory.rack.domain
 
 import com.laboratory.infrastructure.sequence.SequenceConfiguration
+import com.laboratory.infrastructure.sequence.SequenceFacade
 import com.laboratory.patient.domain.PatientConfiguration
 import com.laboratory.patient.domain.PatientFacade
+import com.laboratory.patient.query.PatientQueryRepository
 import com.laboratory.rack.query.RackQuery
 import com.laboratory.rack.query.RackQueryRepository
 import com.laboratory.sample.domain.SampleConfiguration
 import com.laboratory.sample.domain.SampleFacade
 import com.laboratory.sample.domain.exceptions.NoSpaceInLaboratoryException
+import com.laboratory.sample.query.SampleQueryRepository
 import spock.lang.Specification
 
 class RackFacadeSpec extends Specification {
@@ -17,19 +20,23 @@ class RackFacadeSpec extends Specification {
     private def sampleConfiguration = new SampleConfiguration()
     private def sequenceConfiguration = new SequenceConfiguration()
 
-    private RackFacade rackFacade =
-            rackConfiguration.rackFacadeTest(sequenceConfiguration.sequenceFacadeTest(),
-                    sampleConfiguration.sampleQueryRepositoryTest(),
-                    patientConfiguration.patientQueryRepositoryTest())
+    private PatientQueryRepository patientQueryRepository = patientConfiguration.patientQueryRepositoryTest()
 
-    private PatientFacade patientFacade = patientConfiguration.patientFacadeTest(sequenceConfiguration.sequenceFacadeTest())
+    private SampleQueryRepository sampleQueryRepository = sampleConfiguration.sampleQueryRepositoryTest()
 
-    private SampleFacade sampleFacade = sampleConfiguration.sampleFacadeTest(sequenceConfiguration.sequenceFacadeTest())
+    private RackQueryRepository rackQueryRepository = rackConfiguration.rackQueryRepositoryTest()
 
-    private RackQueryRepository rackQueryRepository =
-            rackConfiguration.rackQueryRepositoryTest()
+    private SequenceFacade sequenceFacade = sequenceConfiguration.sequenceFacadeTest()
+
+    private RackFacade rackFacade = rackConfiguration.rackFacadeTest(sequenceFacade, sampleQueryRepository, patientQueryRepository)
+
+    private PatientFacade patientFacade = patientConfiguration.patientFacadeTest(sequenceFacade)
+
+    private SampleFacade sampleFacade = sampleConfiguration.sampleFacadeTest(sequenceFacade)
 
     def cleanup() {
+        patientQueryRepository.deleteAll()
+        sampleQueryRepository.deleteAll()
         rackQueryRepository.deleteAll()
     }
 
