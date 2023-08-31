@@ -22,17 +22,4 @@ public class SampleFacade {
         return sample.getSampleId();
     }
 
-//    public RackId assignToRack(@NonNull SampleId sampleId) {
-//        Sample sample = repository.findBySampleId(sampleId);
-//        PatientQuery patient = sampleQueryRepository.findBySampleId(sampleId).getPatient();
-//        Iterable<RackQuery> racks = rackQueryRepository.findAll();
-//
-//        RackQuery rack = sampleAllocator.allocate(patient, racks);
-//
-//        rackFacade.addSample(rack.getRackId(), sampleId);
-//        sample.assignToRack(rack.getRackId());
-//        repository.save(sample);
-//
-//        return rack.getRackId();
-//    }
 }
