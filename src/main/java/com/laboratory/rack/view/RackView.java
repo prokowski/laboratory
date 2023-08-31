@@ -33,10 +33,6 @@ public class RackView extends AbstractEntity {
         return samples.stream().map(RackSampleView::getSampleId).collect(Collectors.toList());
     }
 
-    public boolean hasEnoughCapacity() {
-        return samples.size() < capacity;
-    }
-
     public RackViewDto toDto() {
         return RackViewDto.builder()
                 .rackId(rackId.id())
